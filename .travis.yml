@@ -1,0 +1,16 @@
+language: generic 
+sudo: required
+services: 
+  - docker
+
+before_install:
+  - docker build -t ashishu/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true ashishu/react-test npm run
+
+after_success:
+  - docker build -t ashishu/multi-react-client -f ./client/Dockerfile ./client
+  - docker build -t ashishu/multi-nginx-server -f ./nginx/Dockerfile ./nginx
+  - docker build -t ashishu/multi-react-server -f ./server/Dockerfile ./server
+  - docker build -t ashishu/multi-react-worker -f ./worker/Dockerfile ./worker
